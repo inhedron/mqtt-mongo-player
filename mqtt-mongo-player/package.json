@@ -1,0 +1,9 @@
+{
+  "name": "mqtt-mongo-player",
+  "version": "0.0.0",
+  "description": "mqtt-mongo-player",
+  "main": "app.js",
+  "author": {
+    "name": "ozgur_000"
+  }
+}
