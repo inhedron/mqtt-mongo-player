@@ -1,6 +1,7 @@
 ﻿var mongodb = require('mongodb');
 var mqtt = require('mqtt');
 var mqtt_regex = require("mqtt-regex");
+var async = require('async');
 const commandLineArgs = require('command-line-args');
 var config = require('./config');
 
@@ -94,28 +95,50 @@ client.on('connect', function (connack) {
                 console.log("count:", count);
             }
         });
-
-        cursor.forEach(function (doc) {
-            if (doc) {
-                if (topic_checker(doc.topic)) {
-                    if (lastTime) {
-                        console.log("time diff:", doc.ts.getTime() - lastTime);
-                        if ((doc.ts.getTime() - lastTime) < 0) {
-                            console.log("time error");
-                        }
-                    }
-                    //if (!last_ts || ) {
-                    lastTime = doc.ts.getTime();
-                    console.log("topic:", doc.topic);
-                    client.publish(doc.topic, doc.message);
-                    //}
-
+        
+        async.during(function (callback) {
+            cursor.hasNext(function (err, r) {
+                return callback(err, r);
+            });
+        }, function (callback) {
+            
+            cursor.next(function (err, doc) {
+                if (err) {
+                    return callback(err);
                 }
-            }
+                
+                if (doc) {
+                    if (topic_checker(doc.topic)) {
+                        var diffTime = 0;
+                        if (lastTime) {
+                            diffTime = doc.ts.getTime() - lastTime;
+                            console.log("time diff:", diffTime);
+                            if (diffTime < 0) {
+                                console.log("time error");
+                            }
+                        }
+
+                        lastTime = doc.ts.getTime();
+                        setTimeout(function () {
+                            console.log("topic:", doc.topic);
+                            client.publish(doc.topic, doc.message);
+                            callback(null);
+                        }, diffTime / options.speed);
+
+                    } else {
+                        callback(null);
+                    }
+                } else {
+                    callback(null);
+                }
+            });
+
+
         }, function (err) {
             if (err) {
                 console.log("ERROR: " + err);
             }
+            console.log("FINISH");
             database.close();
         });
     });

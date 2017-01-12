@@ -12,6 +12,7 @@
     "url": "https://github.com/inhedron/mqtt-mongo-player.git"
   },
   "dependencies": {
+    "async": "^2.1.4",
     "command-line-args": "^3.0.5",
     "mongodb": "^2.2.16",
     "mqtt": "^2.1.3",
