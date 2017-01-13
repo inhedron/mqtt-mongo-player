@@ -103,34 +103,27 @@ client.on('connect', function (connack) {
         }, function (callback) {
             
             cursor.next(function (err, doc) {
-                if (err) {
+                
+                if (err || !doc || !topic_checker(doc.topic)) {
                     return callback(err);
                 }
                 
-                if (doc) {
-                    if (topic_checker(doc.topic)) {
-                        var diffTime = 0;
-                        if (lastTime) {
-                            diffTime = doc.ts.getTime() - lastTime;
-                            console.log("time diff:", diffTime);
-                            if (diffTime < 0) {
-                                console.log("time error");
-                            }
-                        }
-
-                        lastTime = doc.ts.getTime();
-                        setTimeout(function () {
-                            console.log("topic:", doc.topic);
-                            client.publish(doc.topic, doc.message);
-                            callback(null);
-                        }, diffTime / options.speed);
-
-                    } else {
-                        callback(null);
+                var diffTime = 0;
+                if (lastTime) {
+                    diffTime = doc.ts.getTime() - lastTime;
+                    console.log("time diff:", diffTime);
+                    if (diffTime < 0) {
+                        console.log("time error");
                     }
-                } else {
-                    callback(null);
                 }
+                
+                lastTime = doc.ts.getTime();
+                setTimeout(function () {
+                    console.log("topic:", doc.topic);
+                    client.publish(doc.topic, doc.message);
+                    callback(null);
+                }, diffTime / options.speed);
+
             });
 
 
