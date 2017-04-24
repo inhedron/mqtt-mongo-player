@@ -1,6 +1,6 @@
 # mqtt-mongo-player
 
-This NodeJS application publish messages to MQTT that stored by [mqtt-mongo-recorder](https://github.com/inhedron/mqtt-mongo-recorder).
+This NodeJS application publish messages which stored by [mqtt-mongo-recorder](https://github.com/inhedron/mqtt-mongo-recorder) to MQTT
 
 Example
 =======
