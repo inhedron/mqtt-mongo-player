@@ -8,7 +8,7 @@ Example
 Clone the repository
 ```bash
 $ git clone https://github.com/inhedron/mqtt-mongo-player.git
-$ cd mqtt-mongo-player
+$ cd mqtt-mongo-player/mqtt-mongo-player
 $ npm install
 ```
 
